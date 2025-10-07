@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { isConfigured, setProducts, getProducts } from '../services/cloud'
 
 export default function Dashboard(){
   const [title, setTitle] = useState('')
@@ -10,7 +11,11 @@ export default function Dashboard(){
   const dropRef = useRef(null)
 
   useEffect(()=>{
-    try{ setItems(JSON.parse(localStorage.getItem('rf_products')||'[]')) }catch{}
+    if (isConfigured()){
+      getProducts().then(data=> setItems(Array.isArray(data)? data : []))
+    } else {
+      try{ setItems(JSON.parse(localStorage.getItem('rf_products')||'[]')) }catch{}
+    }
   }, [])
 
   useEffect(()=>{
@@ -38,10 +43,14 @@ export default function Dashboard(){
     const newItem = { id: Date.now(), title, price: Number(price), mrp: Number(mrp), image, sizes }
     const next = [...items, newItem]
     setItems(next)
-    try{
-      localStorage.setItem('rf_products', JSON.stringify(next))
-      localStorage.setItem('rf_products__ts', String(Date.now()))
-    }catch{}
+    if (isConfigured()){
+      setProducts(next)
+    } else {
+      try{
+        localStorage.setItem('rf_products', JSON.stringify(next))
+        localStorage.setItem('rf_products__ts', String(Date.now()))
+      }catch{}
+    }
     setTitle(''); setPrice(''); setMrp(''); setImage(''); setSizes([])
   }
 

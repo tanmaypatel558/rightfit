@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { isConfigured, subscribeProducts } from '../services/cloud'
 
 function getCart(){
   try{ return JSON.parse(localStorage.getItem('rf_cart')||'[]') }catch{ return [] }
@@ -72,14 +73,39 @@ export default function Home(){
     }
 
     updateCartCount()
-    renderFeaturedFromStorage()
+
+    // Live subscribe when cloud is configured
+    let unsub = null
+    if (isConfigured()){
+      const grid = document.querySelector('#featured .product-grid')
+      unsub = subscribeProducts((items)=>{
+        if (!grid) return
+        grid.querySelectorAll('[data-dynamic="1"]').forEach(n=> n.remove())
+        items.forEach((p)=>{
+          const art = document.createElement('article')
+          art.className = 'p-card'
+          art.setAttribute('data-dynamic','1')
+          art.dataset.sizes = (p.sizes || []).join(',')
+          art.innerHTML = `
+            <img src="${p.image || 'https://via.placeholder.com/800x960?text=Image'}" alt="${p.title}" />
+            <h3>${p.title}</h3>
+            <div class=\"p-price\">₹${p.price} <span class=\"p-mrp\">₹${p.mrp}</span> <span class=\"p-off\"></span></div>
+          `
+          grid.appendChild(art)
+          art.style.cursor = 'pointer'
+          art.addEventListener('click', ()=> openSizeModalFromEl(art))
+        })
+      })
+    } else {
+      renderFeaturedFromStorage()
+    }
 
     const onStorage = (e)=>{
       if (e.key === 'rf_cart') updateCartCount()
       if (e.key === 'rf_products' || e.key === 'rf_products__ts') renderFeaturedFromStorage()
     }
     window.addEventListener('storage', onStorage)
-    return ()=> window.removeEventListener('storage', onStorage)
+    return ()=> { window.removeEventListener('storage', onStorage); if (unsub) unsub() }
   },[])
 
   useEffect(()=>{
