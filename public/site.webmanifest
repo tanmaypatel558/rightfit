@@ -1,0 +1,13 @@
+{
+  "name": "Right Fit",
+  "short_name": "Right Fit",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#111111",
+  "icons": [
+    { "src": "/logoR.png", "sizes": "192x192", "type": "image/png" }
+  ]
+}
+
+

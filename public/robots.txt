@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Sitemap: https://rightfit-twzg.vercel.app/sitemap.xml
+
+
