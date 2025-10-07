@@ -22,17 +22,20 @@ function openSizeModalFromEl(card){
   const modalImage = document.getElementById('modalImage')
   const modalPrice = document.getElementById('modalPrice')
   if (!modal) return
-  const priceText = card.querySelector('.p-price')?.textContent || ''
-  const fallbackPrice = card.dataset.price ? `₹${card.dataset.price}` : ''
+  const price = card.dataset.price || ''
+  const mrp = card.dataset.mrp || ''
   modal.dataset.productImage = card.dataset.image || card.querySelector('img')?.getAttribute('src') || ''
-  modal.dataset.productPrice = priceText || fallbackPrice
+  modal.dataset.productPrice = price ? `₹${price}` : ''
+  modal.dataset.productMrp = mrp ? `₹${mrp}` : ''
   modal.dataset.productTitle = card.dataset.title || card.querySelector('h3')?.textContent || 'T-Shirt'
   if (modalImage){
     modalImage.src = modal.dataset.productImage || ''
     modalImage.style.display = modalImage.src ? 'block' : 'none'
   }
   if (modalPrice){
-    modalPrice.textContent = modal.dataset.productPrice || ''
+    const p = modal.dataset.productPrice || ''
+    const m = modal.dataset.productMrp || ''
+    modalPrice.innerHTML = m ? `${p} <span class="p-mrp">${m}</span>` : p
   }
   const sizeOptions = document.getElementById('sizeOptions')
   if (sizeOptions){
@@ -60,6 +63,7 @@ export default function Home(){
       art.dataset.sizes = (p.sizes || []).join(',')
       art.dataset.price = String(p.price || '')
       art.dataset.title = p.title || ''
+      art.dataset.mrp = String(p.mrp || '')
       art.dataset.image = p.image || ''
       art.innerHTML = `
         <img src="${p.image || 'https://via.placeholder.com/800x960?text=Image'}" alt="${p.title}" />
