@@ -9,6 +9,23 @@ export default function Dashboard(){
   const [sizes, setSizes] = useState([])
   const [items, setItems] = useState([])
   const dropRef = useRef(null)
+  const fileInputRef = useRef(null)
+
+  async function uploadFile(file){
+    if (!file) return
+    if (isConfigured()){
+      const url = await uploadImageToStorage(file)
+      if (url) setImage(url)
+    } else {
+      const form = new FormData()
+      form.append('file', file)
+      try{
+        const res = await fetch('/upload', { method: 'POST', body: form })
+        const data = await res.json()
+        if (data?.url) setImage(data.url)
+      }catch{}
+    }
+  }
 
   useEffect(()=>{
     if (isConfigured()){
@@ -26,18 +43,7 @@ export default function Dashboard(){
       e.preventDefault()
       const file = e.dataTransfer?.files?.[0]
       if (!file) return
-      if (isConfigured()){
-        const url = await uploadImageToStorage(file)
-        if (url) setImage(url)
-      } else {
-        const form = new FormData()
-        form.append('file', file)
-        try{
-          const res = await fetch('/upload', { method: 'POST', body: form })
-          const data = await res.json()
-          if (data?.url) setImage(data.url)
-        }catch{}
-      }
+      await uploadFile(file)
     }
     drop.addEventListener('dragover', onDrag)
     drop.addEventListener('drop', onDrop)
@@ -90,12 +96,16 @@ export default function Dashboard(){
         <div className="field">
           <label htmlFor="image">Image URL</label>
           <input id="image" type="url" placeholder="https://..." value={image} onChange={e=>setImage(e.target.value)} />
-          <div id="dropper" ref={dropRef} style={{marginTop:8,padding:12,border:'1px dashed var(--border)',borderRadius:8,background:'var(--bg)',textAlign:'center',color:'var(--muted)',cursor:'copy'}}>
-            Drag & drop an image here, or paste a URL above
+          <div style={{display:'flex',gap:8,alignItems:'center',marginTop:8}}>
+            <div id="dropper" ref={dropRef} style={{flex:1,padding:12,border:'1px dashed var(--border)',borderRadius:8,background:'var(--bg)',textAlign:'center',color:'var(--muted)',cursor:'copy'}}>
+              Drag & drop an image here
+            </div>
+            <input ref={fileInputRef} type="file" accept="image/*" style={{display:'none'}} onChange={async (e)=>{ const f = e.target.files?.[0]; if (f) { await uploadFile(f); e.target.value = '' } }} />
+            <button className="btn" onClick={()=> fileInputRef.current?.click()}>Select file</button>
           </div>
           <div style={{marginTop:8,display:'flex',alignItems:'center',gap:10}}>
             <img id="imgPreview" src={image || 'https://via.placeholder.com/120?text=Preview'} alt="Preview" style={{width:120,height:120,objectFit:'cover',border:'1px solid var(--border)',borderRadius:8}} />
-            <small style={{color:'var(--muted)'}}>URL, drag & drop, or data URL (jpg, png, webp)</small>
+            <small style={{color:'var(--muted)'}}>Paste a URL, drag & drop, or select a file</small>
           </div>
         </div>
         <div className="field">
