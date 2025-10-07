@@ -13,6 +13,7 @@ export default function Dashboard(){
 
   async function uploadFile(file){
     if (!file) return
+    const LOCAL_UPLOAD_URL = 'http://127.0.0.1:5174/upload'
     if (isConfigured()){
       const url = await uploadImageToStorage(file)
       if (url) setImage(url)
@@ -20,7 +21,7 @@ export default function Dashboard(){
       const form = new FormData()
       form.append('file', file)
       try{
-        const res = await fetch('/upload', { method: 'POST', body: form })
+        const res = await fetch(LOCAL_UPLOAD_URL, { method: 'POST', body: form })
         if (!res.ok) throw new Error(`Upload failed: ${res.status}`)
         const data = await res.json()
         if (data?.url) { setImage(data.url); return }
