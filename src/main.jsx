@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import App from './App.jsx'
 import Home from './pages/Home.jsx'
 import Dashboard from './pages/Dashboard.jsx'
+import Cart from './pages/Cart.jsx'
 import './index.css'
 
 const router = createBrowserRouter([
@@ -13,6 +14,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Home /> },
       { path: 'dashboard', element: <Dashboard /> },
+      { path: 'cart', element: <Cart /> },
     ],
   },
 ])

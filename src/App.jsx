@@ -1,7 +1,28 @@
+import { useEffect } from 'react'
 import { Outlet, Link, NavLink } from 'react-router-dom'
 import './index.css'
 
 export default function App(){
+  useEffect(()=>{
+    function getCart(){
+      try{ return JSON.parse(localStorage.getItem('rf_cart')||'[]') }catch{ return [] }
+    }
+    function updateCartCount(){
+      const el = document.getElementById('cartCount')
+      if (!el) return
+      const total = getCart().reduce((sum,i)=> sum + (i.qty||1), 0)
+      if (total > 0){
+        el.textContent = String(total)
+        el.style.display = 'inline-block'
+      } else {
+        el.style.display = 'none'
+      }
+    }
+    updateCartCount()
+    const onStorage = (e)=>{ if (e.key === 'rf_cart') updateCartCount() }
+    window.addEventListener('storage', onStorage)
+    return ()=> window.removeEventListener('storage', onStorage)
+  }, [])
   return (
     <div>
       <header className="site-header">
