@@ -48,26 +48,26 @@ export default function Cart(){
       {items.length === 0 ? (
         <div style={{color:'var(--muted)'}}>Your cart is empty.</div>
       ) : (
-        <div style={{display:'grid',gridTemplateColumns:'2fr 1fr',gap:16}}>
+        <div className="cart-grid">
           <div style={{display:'grid',gap:12}}>
             {items.map(it=> (
-              <div key={it.id} style={{border:'1px solid var(--border)',borderRadius:12,padding:12,display:'grid',gridTemplateColumns:'96px 1fr auto',gap:12,alignItems:'center'}}>
-                <img src={it.image || 'https://via.placeholder.com/96'} alt={it.title} style={{width:96,height:96,objectFit:'cover',borderRadius:8,border:'1px solid var(--border)'}} />
-                <div>
+              <div key={it.id} className="cart-item">
+                <img src={it.image || 'https://via.placeholder.com/96'} alt={it.title} className="cart-item-image" />
+                <div className="cart-item-info">
                   <div style={{fontWeight:600}}>{it.title}</div>
                   <div style={{color:'var(--muted)'}}>Size: {it.size||'—'}</div>
                   <div style={{marginTop:6}}>₹{it.price}</div>
                 </div>
-                <div style={{display:'flex',alignItems:'center',gap:8}}>
+                <div className="cart-item-actions">
                   <button className="btn" onClick={()=> setQty(it.id, (it.qty||1)-1)}>-</button>
-                  <input value={it.qty||1} onChange={(e)=> setQty(it.id, parseInt(e.target.value||'1',10)||1)} style={{width:48,textAlign:'center',border:'1px solid var(--border)',borderRadius:8,padding:'8px 6px'}} />
+                  <input value={it.qty||1} onChange={(e)=> setQty(it.id, parseInt(e.target.value||'1',10)||1)} className="cart-qty-input" />
                   <button className="btn" onClick={()=> setQty(it.id, (it.qty||1)+1)}>+</button>
                   <button className="btn" onClick={()=> removeItem(it.id)} style={{marginLeft:8}}>Remove</button>
                 </div>
               </div>
             ))}
           </div>
-          <aside style={{border:'1px solid var(--border)',borderRadius:12,padding:12,height:'fit-content'}}>
+          <aside className="cart-summary">
             <div style={{display:'flex',justifyContent:'space-between',marginBottom:8}}>
               <span>Subtotal</span><strong>₹{subtotal}</strong>
             </div>

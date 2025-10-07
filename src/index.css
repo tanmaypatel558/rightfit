@@ -65,3 +65,15 @@ html,body{margin:0;padding:0;font-family:Inter,system-ui,-apple-system,Segoe UI,
 .sticky-price{font-weight:700}
 @media (max-width: 960px){.hero-inner{grid-template-columns:1fr;min-height:360px}.cat-grid{grid-template-columns:repeat(2,1fr)}.product-grid{grid-template-columns:repeat(2,1fr)}}
 @media (max-width: 640px){.header-inner{height:56px}.primary-nav{display:none}.search{min-width:0;width:120px}.logo img{height:40px}}
+.cart-grid{display:grid;grid-template-columns:2fr 1fr;gap:12px}
+.cart-item{border:1px solid var(--border);border-radius:12px;padding:12px;display:grid;grid-template-columns:96px 1fr auto;gap:12px;align-items:center}
+.cart-item-image{width:96px;height:96px;object-fit:cover;border-radius:8px;border:1px solid var(--border)}
+.cart-item-actions{display:flex;align-items:center;gap:8px}
+.cart-qty-input{width:48px;text-align:center;border:1px solid var(--border);border-radius:8px;padding:8px 6px}
+.cart-summary{border:1px solid var(--border);border-radius:12px;padding:12px;height:fit-content}
+@media (max-width: 640px){
+  .cart-grid{grid-template-columns:1fr}
+  .cart-item{grid-template-columns:72px 1fr;align-items:start}
+  .cart-item-image{width:72px;height:72px}
+  .cart-item-actions{grid-column:1 / -1}
+}
