@@ -21,9 +21,20 @@ export default function Dashboard(){
       form.append('file', file)
       try{
         const res = await fetch('/upload', { method: 'POST', body: form })
+        if (!res.ok) throw new Error(`Upload failed: ${res.status}`)
         const data = await res.json()
-        if (data?.url) setImage(data.url)
-      }catch{}
+        if (data?.url) { setImage(data.url); return }
+        throw new Error('No URL returned')
+      }catch(err){
+        // Fallback: preview via data URL so user can proceed locally
+        console.error('Local upload failed, falling back to data URL preview:', err)
+        await new Promise((resolve)=>{
+          const reader = new FileReader()
+          reader.onload = ()=>{ setImage(String(reader.result||'')); resolve() }
+          reader.onerror = ()=> resolve()
+          reader.readAsDataURL(file)
+        })
+      }
     }
   }
 
