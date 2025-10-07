@@ -1,68 +1,67 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
-}
+/* Right Fit global styles migrated from original project */
+:root{--bg:#ffffff;--text:#111;--muted:#666;--border:#e5e7eb;--brand:#111;--accent:#1a73e8;--price:#111;--green:#10b981}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
+.container{max-width:1200px;margin:0 auto;padding:0 16px}
+.site-header{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--border);z-index:10}
+.header-inner{display:flex;align-items:center;justify-content:space-between;height:60px;gap:16px}
+.logo{font-weight:700;font-size:20px;display:flex;align-items:center}
+.logo img{display:block;height:120px;width:auto}
+.primary-nav{display:flex;gap:16px}
+.primary-nav a{color:var(--muted);text-decoration:none}
+.primary-nav a.active{color:var(--text);font-weight:600}
+.header-actions{display:flex;align-items:center;gap:8px}
+.search{border:1px solid var(--border);border-radius:999px;padding:8px 12px;min-width:160px}
+.icon-btn{background:transparent;border:1px solid var(--border);border-radius:999px;padding:8px 12px;cursor:pointer}
+.btn{padding:10px 14px;border-radius:8px;border:1px solid var(--border);cursor:pointer}
+.btn.primary{background:var(--text);color:#fff;border-color:var(--text)}
+.btn.secondary{background:#fff;color:var(--text)}
+.hero-men{background:#f6f7f9}
+.hero-media{background:url('https://source.unsplash.com/1200x600/?men,tshirt&sig=10') center/cover no-repeat;min-height:320px}
+.hero-inner{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;min-height:420px;align-items:center}
+.hero-copy h1{font-size:40px;margin:0 0 8px}
+.hero-copy p{color:var(--muted);margin:0 0 16px}
+.hero-actions{display:flex;gap:12px}
+.categories{padding:24px 16px}
+.categories h2{font-size:20px;margin:0 0 12px}
+.cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.cat-card{position:relative;border:1px solid var(--border);border-radius:12px;overflow:hidden;text-decoration:none;color:inherit}
+.cat-card img{display:block;width:100%;height:180px;object-fit:cover}
+.cat-card span{position:absolute;left:8px;bottom:8px;background:#fff;padding:6px 10px;border-radius:999px;border:1px solid var(--border);font-weight:600}
+.featured{padding:8px 16px 24px}
+.featured h2{font-size:20px;margin:0 0 12px}
+.product-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.p-card{border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.p-card img{display:block;width:100%;height:240px;object-fit:cover}
+.p-card h3{font-size:14px;margin:8px 8px 4px}
+.p-price{margin:0 8px 10px}
+.p-mrp{text-decoration:line-through;color:var(--muted);margin-left:6px}
+.p-off{color:var(--green);margin-left:6px;font-weight:600}
+.recommendations{padding:16px}
+.recommendations h2{font-size:18px;margin:0 0 12px}
+.recs-row{display:grid;grid-auto-flow:column;grid-auto-columns:200px;gap:12px;overflow-x:auto;padding-bottom:8px}
+.card{border:1px solid var(--border);border-radius:10px;overflow:hidden;background:#fff}
+.card img{display:block;width:100%;height:180px;object-fit:cover}
+.card h3{font-size:14px;margin:8px 8px 4px}
+.card-price{font-weight:700;margin:0 8px 8px}
+.site-footer{border-top:1px solid var(--border);margin-top:24px}
+.footer-inner{display:flex;justify-content:space-between;align-items:center;height:64px}
+.footer-inner .links{display:flex;gap:12px}
+.footer-inner a{color:var(--muted);text-decoration:none}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#111;color:#fff;padding:10px 14px;border-radius:999px;opacity:0;pointer-events:none;transition:opacity .2s, transform .2s;z-index:20}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(-4px)}
+.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:30}
+.modal[aria-hidden="false"]{display:flex}
+.modal-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.32)}
+.modal-dialog{position:relative;background:#fff;border-radius:12px;border:1px solid var(--border);padding:16px;max-width:360px;width:92%;box-shadow:0 10px 30px rgba(0,0,0,.15)}
+.modal-close{position:absolute;right:8px;top:8px;background:transparent;border:0;font-size:20px;cursor:pointer}
+.size-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0 16px}
+.size-option{border:1px solid var(--border);background:#fff;border-radius:10px;padding:10px 0;cursor:pointer}
+.size-option[aria-pressed="true"], .size-option:focus{outline:none;border-color:var(--text);box-shadow:0 0 0 2px rgba(17,17,17,.08) inset}
+.sticky-cta{position:fixed;left:0;right:0;bottom:-100px;background:#fff;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;padding:12px 16px;gap:12px;transition:bottom .25s ease;z-index:15}
+.sticky-cta.show{bottom:0}
+.sticky-info{display:flex;flex-direction:column}
+.sticky-title{font-size:14px}
+.sticky-price{font-weight:700}
+@media (max-width: 960px){.hero-inner{grid-template-columns:1fr;min-height:360px}.cat-grid{grid-template-columns:repeat(2,1fr)}.product-grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width: 640px){.header-inner{height:56px}.primary-nav{display:none}.search{min-width:0;width:120px}.logo img{height:40px}}
