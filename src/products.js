@@ -7,7 +7,7 @@ export const products = [
     title: 'Never Give Up Print T-Shirt',
     price: 349,
     mrp: 399,
-    image: '/public/tshirt/IMG_7784.jpg',
+    image: 'tshirt/IMG_7784.jpg',
     sizes: ['M']
   },
   {
@@ -15,7 +15,7 @@ export const products = [
     title: 'Rise Strong Print T-Shirt',
     price: 329,
     mrp: 379,
-    image: '/public/tshirt/IMG_7788.jpg',
+    image: 'tshirt/IMG_7788.jpg',
     sizes: ['L']
   }
 ]
