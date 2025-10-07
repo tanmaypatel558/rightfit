@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { isConfigured, setProducts, getProducts } from '../services/cloud'
+import { isConfigured, setProducts, getProducts, uploadImageToStorage } from '../services/cloud'
 
 export default function Dashboard(){
   const [title, setTitle] = useState('')
@@ -22,13 +22,22 @@ export default function Dashboard(){
     const drop = dropRef.current
     if (!drop) return
     const onDrag = (e)=>{ e.preventDefault() }
-    const onDrop = (e)=>{
+    const onDrop = async (e)=>{
       e.preventDefault()
       const file = e.dataTransfer?.files?.[0]
       if (!file) return
-      const reader = new FileReader()
-      reader.onload = ()=> setImage(String(reader.result||''))
-      reader.readAsDataURL(file)
+      if (isConfigured()){
+        const url = await uploadImageToStorage(file)
+        if (url) setImage(url)
+      } else {
+        const form = new FormData()
+        form.append('file', file)
+        try{
+          const res = await fetch('/upload', { method: 'POST', body: form })
+          const data = await res.json()
+          if (data?.url) setImage(data.url)
+        }catch{}
+      }
     }
     drop.addEventListener('dragover', onDrag)
     drop.addEventListener('drop', onDrop)
