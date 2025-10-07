@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { isConfigured, subscribeProducts } from '../services/cloud'
+import { products } from '../products'
 
 function getCart(){
   try{ return JSON.parse(localStorage.getItem('rf_cart')||'[]') }catch{ return [] }
@@ -22,9 +22,11 @@ function openSizeModalFromEl(card){
   const modalImage = document.getElementById('modalImage')
   const modalPrice = document.getElementById('modalPrice')
   if (!modal) return
-  modal.dataset.productImage = card.querySelector('img')?.getAttribute('src') || ''
-  modal.dataset.productPrice = card.querySelector('.p-price')?.textContent || ''
-  modal.dataset.productTitle = card.querySelector('h3')?.textContent || 'T-Shirt'
+  const priceText = card.querySelector('.p-price')?.textContent || ''
+  const fallbackPrice = card.dataset.price ? `₹${card.dataset.price}` : ''
+  modal.dataset.productImage = card.dataset.image || card.querySelector('img')?.getAttribute('src') || ''
+  modal.dataset.productPrice = priceText || fallbackPrice
+  modal.dataset.productTitle = card.dataset.title || card.querySelector('h3')?.textContent || 'T-Shirt'
   if (modalImage){
     modalImage.src = modal.dataset.productImage || ''
     modalImage.style.display = modalImage.src ? 'block' : 'none'
@@ -49,63 +51,27 @@ function openSizeModalFromEl(card){
 
 export default function Home(){
   useEffect(()=>{
-    function renderFeaturedFromStorage(){
-      const grid = document.querySelector('#featured .product-grid')
-      if (!grid) return
-      try{
-        const items = JSON.parse(localStorage.getItem('rf_products') || '[]')
-        grid.querySelectorAll('[data-dynamic="1"]').forEach(n=> n.remove())
-        items.forEach((p)=>{
-          const art = document.createElement('article')
-          art.className = 'p-card'
-          art.setAttribute('data-dynamic','1')
-          art.dataset.sizes = (p.sizes || []).join(',')
-          art.innerHTML = `
-            <img src="${p.image || 'https://via.placeholder.com/800x960?text=Image'}" alt="${p.title}" />
-            <h3>${p.title}</h3>
-            <div class="p-price">₹${p.price} <span class="p-mrp">₹${p.mrp}</span> <span class="p-off"></span></div>
-          `
-          grid.appendChild(art)
-          art.style.cursor = 'pointer'
-          art.addEventListener('click', ()=> openSizeModalFromEl(art))
-        })
-      }catch{}
-    }
+    const grid = document.querySelector('#featured .product-grid')
+    if (!grid) return
+    grid.innerHTML = ''
+    products.forEach((p)=>{
+      const art = document.createElement('article')
+      art.className = 'p-card'
+      art.dataset.sizes = (p.sizes || []).join(',')
+      art.dataset.price = String(p.price || '')
+      art.dataset.title = p.title || ''
+      art.dataset.image = p.image || ''
+      art.innerHTML = `
+        <img src="${p.image || 'https://via.placeholder.com/800x960?text=Image'}" alt="${p.title}" />
+        <h3>${p.title}</h3>
+        <div class="p-price">₹${p.price} <span class="p-mrp">₹${p.mrp}</span> <span class="p-off"></span></div>
+      `
+      grid.appendChild(art)
+      art.style.cursor = 'pointer'
+      art.addEventListener('click', ()=> openSizeModalFromEl(art))
+    })
 
     updateCartCount()
-
-    // Live subscribe when cloud is configured
-    let unsub = null
-    if (isConfigured()){
-      const grid = document.querySelector('#featured .product-grid')
-      unsub = subscribeProducts((items)=>{
-        if (!grid) return
-        grid.querySelectorAll('[data-dynamic="1"]').forEach(n=> n.remove())
-        items.forEach((p)=>{
-          const art = document.createElement('article')
-          art.className = 'p-card'
-          art.setAttribute('data-dynamic','1')
-          art.dataset.sizes = (p.sizes || []).join(',')
-          art.innerHTML = `
-            <img src="${p.image || 'https://via.placeholder.com/800x960?text=Image'}" alt="${p.title}" />
-            <h3>${p.title}</h3>
-            <div class=\"p-price\">₹${p.price} <span class=\"p-mrp\">₹${p.mrp}</span> <span class=\"p-off\"></span></div>
-          `
-          grid.appendChild(art)
-          art.style.cursor = 'pointer'
-          art.addEventListener('click', ()=> openSizeModalFromEl(art))
-        })
-      })
-    } else {
-      renderFeaturedFromStorage()
-    }
-
-    const onStorage = (e)=>{
-      if (e.key === 'rf_cart') updateCartCount()
-      if (e.key === 'rf_products' || e.key === 'rf_products__ts') renderFeaturedFromStorage()
-    }
-    window.addEventListener('storage', onStorage)
-    return ()=> { window.removeEventListener('storage', onStorage); if (unsub) unsub() }
   },[])
 
   useEffect(()=>{
@@ -128,22 +94,18 @@ export default function Home(){
   const confirmAdd = ()=>{
     const modal = document.getElementById('sizeModal')
     if (!modal) return
-    const selected = document.querySelector('#sizeOptions .size-option[aria-pressed="true"]')
+    let selected = document.querySelector('#sizeOptions .size-option[aria-pressed="true"]')
     if (!selected){
-      const toast = document.getElementById('toast')
-      if (toast){
-        toast.textContent = 'Please select a size'
-        toast.classList.add('show')
-        setTimeout(()=> toast.classList.remove('show'), 1400)
-      }
-      return
+      // auto-select first size if none chosen
+      const first = document.querySelector('#sizeOptions .size-option')
+      if (first){ first.setAttribute('aria-pressed','true'); selected = first }
     }
     const title = modal.dataset.productTitle || 'T-Shirt'
     const image = modal.dataset.productImage || ''
     const priceText = modal.dataset.productPrice || ''
     const match = priceText.match(/₹\s*(\d+)/)
     const price = match ? parseInt(match[1],10) : 0
-    const item = { id: Date.now(), title, size: selected.getAttribute('data-size') || 'M', image, price, qty: 1 }
+    const item = { id: Date.now(), title, size: selected?.getAttribute('data-size') || 'M', image, price, qty: 1 }
     try{
       const cart = JSON.parse(localStorage.getItem('rf_cart') || '[]')
       cart.push(item)
@@ -152,7 +114,8 @@ export default function Home(){
     updateCartCount()
     const toast = document.getElementById('toast')
     if (toast){
-      toast.textContent = `${title} (${selected.getAttribute('data-size')}) added to cart`
+      const sz = selected?.getAttribute('data-size') || 'M'
+      toast.textContent = `${title} (${sz}) added to cart`
       toast.classList.add('show')
       setTimeout(()=> toast.classList.remove('show'), 1400)
     }
