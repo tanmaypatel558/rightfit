@@ -30,6 +30,7 @@ app.post('/upload', upload.single('file'), (req, res)=>{
 })
 
 const port = process.env.UPLOAD_PORT || 5174
-app.listen(port, ()=>{
-  console.log(`Upload server listening on http://localhost:${port}`)
+const host = '127.0.0.1'
+app.listen(port, host, ()=>{
+  console.log(`Upload server listening on http://${host}:${port}`)
 })
